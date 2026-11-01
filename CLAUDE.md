@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Static sales demos of MBN DEV (coffee, barber, beauty, law + secretary desk, rent), split out of `mounirbeni/mbndev`.
+Static sales demos of MBN DEV (coffee, barber, beauty, law + secretary desk, rent), split out of `mounirbeni/mbndev`. Repo `mounirbeni/mbn-demos` (public) → Vercel project `mbndev-demos` (https://mbndev-demos.vercel.app).
 
 - No build, no backend. Each demo lives in `public/demos/<slug>/` and uses absolute paths `/demos/<slug>/…`; clean URLs `/demo/<slug>[/admin|/secretary]` are rewrites in `vercel.json`. `/` redirects to https://mbndev.ma/portfolio.
 - Demo data stays in each visitor's localStorage.
