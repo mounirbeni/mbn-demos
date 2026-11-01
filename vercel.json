@@ -1,0 +1,88 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": false,
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://mbndev.ma/portfolio",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/demo/coffee",
+      "destination": "/demos/coffee/index.html"
+    },
+    {
+      "source": "/demo/coffee/admin",
+      "destination": "/demos/coffee/admin.html"
+    },
+    {
+      "source": "/demo/barber",
+      "destination": "/demos/barber/index.html"
+    },
+    {
+      "source": "/demo/barber/admin",
+      "destination": "/demos/barber/admin.html"
+    },
+    {
+      "source": "/demo/beauty",
+      "destination": "/demos/beauty/index.html"
+    },
+    {
+      "source": "/demo/beauty/admin",
+      "destination": "/demos/beauty/admin.html"
+    },
+    {
+      "source": "/demo/law",
+      "destination": "/demos/law/index.html"
+    },
+    {
+      "source": "/demo/law/admin",
+      "destination": "/demos/law/admin.html"
+    },
+    {
+      "source": "/demo/law/secretary",
+      "destination": "/demos/law/secretary.html"
+    },
+    {
+      "source": "/demo/rent",
+      "destination": "/demos/rent/index.html"
+    },
+    {
+      "source": "/demo/rent/admin",
+      "destination": "/demos/rent/admin.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://mbndev.ma; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+        }
+      ]
+    }
+  ]
+}

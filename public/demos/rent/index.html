@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ATLAS DRIVE — Car rental in Morocco · Demo</title>
+<meta name="description" content="Demo website of a car rental company: live availability, automatic prices, instant booking requests." />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#0b0f17" />
+<link rel="icon" href="/demos/rent/icon.svg" type="image/svg+xml" />
+<link rel="preload" href="/demos/rent/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="/demos/rent/css/fonts.css" />
+<link rel="stylesheet" href="/demos/rent/css/site.css" />
+</head>
+<body>
+<div class="demobar" id="demobar"><span class="dot"></span><span>Demo website by MBN DEV — fictional car rental company, real features.</span> <a href="/quote" target="_blank" rel="noopener">Get one for your agency</a><button type="button" class="x" id="demobarClose" aria-label="Close">×</button></div>
+<header class="hdr" id="top">
+  <div class="hdr-in">
+    <a class="brand" href="/demo/rent"><img src="/demos/rent/icon.svg" alt="" width="34" height="34" /><b>ATLAS<span>DRIVE</span></b></a>
+    <nav class="nav" aria-label="Main"><a href="#cats">Vehicles</a><a href="#fleet">Available cars</a><a href="#why">Why Atlas Drive</a><a href="#places">Locations</a><a href="#faq">Help</a></nav>
+    <div class="hdr-r">
+      <label class="cur"><span class="sr">Currency</span><select id="cur" aria-label="Currency"><option>MAD</option><option>USD</option><option>EUR</option></select></label>
+      <button type="button" class="btn ghost sm" id="lookupBtn">My booking</button>
+      <a class="btn dark sm" href="/demo/rent/admin">Owner dashboard</a>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="hero-in">
+    <div class="hero-txt">
+      <p class="eyebrow"><i></i>Car rental · Morocco</p>
+      <h1>Rent a car in Morocco.<br /><span>Simple, clear, instant.</span></h1>
+      <p class="lead">Live availability, prices calculated for your dates and free cancellation up to 48 hours before pick-up.</p>
+    </div>
+    <div class="hero-car" aria-hidden="true"><div class="swoosh"></div><div id="heroCar"></div></div>
+  </div>
+  <form class="search" id="search" autocomplete="off">
+    <label><span>Pick-up location</span><select id="pickup"></select></label>
+    <label><span>Pick-up date</span><input type="date" id="from" required /></label>
+    <label><span>Return date</span><input type="date" id="to" required /></label>
+    <label><span>Vehicle type</span><select id="cat"></select></label>
+    <button class="btn pri lg" type="submit">Show cars</button>
+  </form>
+  <ul class="perks"><li>Free cancellation</li><li>No hidden fees</li><li>Basic insurance included</li><li>24/7 roadside assistance</li></ul>
+</section>
+
+<section class="sec" id="cats">
+  <div class="wrap">
+    <div class="sec-h"><p class="kick">Fleet</p><h2>Choose your vehicle type</h2><p>From city cars to vans for the whole group.</p></div>
+    <div class="catg" id="catGrid"></div>
+  </div>
+</section>
+
+<section class="sec alt" id="fleet" aria-live="polite">
+  <div class="wrap">
+    <div class="sec-h row"><div><h2 id="resTitle">Available cars</h2><p id="resSub"></p></div>
+      <label class="sort"><span class="sr">Sort by</span><select id="sort"><option value="price">Price: low to high</option><option value="priceDesc">Price: high to low</option><option value="seats">Most seats</option></select></label></div>
+    <div class="chips" id="chips"></div>
+    <div class="grid" id="results"></div>
+  </div>
+</section>
+
+<section class="sec" id="why">
+  <div class="wrap">
+    <div class="sec-h center"><p class="kick">Why us</p><h2>Why book with Atlas Drive</h2><p>Everything you need for a smooth rental.</p></div>
+    <div class="vals">
+      <article><i><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></i><h3>Real availability</h3><p>You only see cars that are free on your dates, so there is no surprise after you book.</p></article>
+      <article><i><svg viewBox="0 0 24 24"><path d="M12 3v18M16.5 7.5c0-1.7-2-3-4.5-3S7.5 5.8 7.5 7.5 9.5 10 12 10.5s4.5 1.8 4.5 3.5-2 3.5-4.5 3.5-4.5-1.3-4.5-3"/></svg></i><h3>Transparent prices</h3><p>Days, season, extras and discounts are listed line by line before you send the request.</p></article>
+      <article><i><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></i><h3>Insurance included</h3><p>Basic cover is included. Upgrade to full insurance with zero excess in one tap.</p></article>
+      <article><i><svg viewBox="0 0 24 24"><path d="M3 13h13l3-5h2v8h-2"/><circle cx="7" cy="17" r="2"/><circle cx="16" cy="17" r="2"/></svg></i><h3>Delivered to you</h3><p>Pick up at the airport or office, or ask us to deliver the car to your hotel or riad.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="sec alt" id="how">
+  <div class="wrap">
+    <div class="sec-h center"><p class="kick">3 steps</p><h2>How it works</h2><p>Book in three simple steps.</p></div>
+    <ol class="steps">
+      <li><b>1</b><h3>Search</h3><p>Choose your dates and location, then pick a car from the live list.</p></li>
+      <li><b>2</b><h3>Request</h3><p>Send your details. We confirm by email and WhatsApp, usually within the hour.</p></li>
+      <li><b>3</b><h3>Drive</h3><p>Show your licence and ID at pick-up, sign the contract and go.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec" id="places">
+  <div class="wrap">
+    <div class="sec-h"><p class="kick">Locations</p><h2>Pick-up locations</h2><p>Six points across Morocco. Different return point? Just tell us.</p></div>
+    <ul class="places" id="placeList"></ul>
+  </div>
+</section>
+
+<section class="sec alt" id="faq">
+  <div class="wrap narrow">
+    <div class="sec-h center"><p class="kick">Help</p><h2>Frequently asked questions</h2></div>
+    <details><summary>What do I need to rent a car?</summary><p>A valid driving licence held for at least two years, your passport or ID card, and a bank card for the security deposit. The minimum age is 21.</p></details>
+    <details><summary>How does the deposit work?</summary><p>A deposit is held on your card at pick-up and released when the car comes back in the same condition. The amount depends on the category and is shown before you book. With full insurance it is reduced.</p></details>
+    <details><summary>Can I cancel my booking?</summary><p>Yes. Cancel free of charge up to 48 hours before pick-up, from the “My booking” button with your reference and phone number.</p></details>
+    <details><summary>Is mileage limited?</summary><p>200 km a day is included. On rentals of three days or more the mileage is unlimited.</p></details>
+    <details><summary>Can I take the car to another city?</summary><p>Yes, within Morocco. One-way returns to another office are possible; ask us for the fee.</p></details>
+  </div>
+</section>
+
+<section class="cta"><div class="wrap"><div class="cta-in"><div><h2>Ready to hit the road?</h2><p>Choose your dates and see which cars are free right now.</p></div><a class="btn dark lg" href="#top" id="ctaBtn">Search cars</a></div></div></section>
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ft-grid">
+      <div><a class="brand" href="/demo/rent"><img src="/demos/rent/icon.svg" alt="" width="34" height="34" /><b>ATLAS<span>DRIVE</span></b></a><p>Atlas Drive is a demo car rental company. Cars, prices and customers are fictional.</p></div>
+      <div><h4>Rent</h4><a href="#cats">Vehicle types</a><a href="#fleet">Available cars</a><a href="#places">Locations</a></div>
+      <div><h4>Help</h4><a href="#how">How it works</a><a href="#faq">FAQ</a><button type="button" id="dockLookup">My booking</button></div>
+      <div><h4>Company</h4><a href="/demo/rent/admin">Owner dashboard (demo)</a><span>Demo by <b>MBN DEV</b></span></div>
+    </div>
+  </div>
+</footer>
+
+<nav class="tabbar mbar" aria-label="Quick actions"><a class="btn pri" href="#top" id="mbarSearch">Search cars</a><button type="button" class="btn ghost" id="mbarLookup">My booking</button></nav>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="/demos/rent/js/site.js"></script>
+<script src="/demos/_shared/wa-chat.js" data-demo="rent" data-biz="ATLAS DRIVE" data-accent="#ff6a1f" defer></script>
+</body>
+</html>

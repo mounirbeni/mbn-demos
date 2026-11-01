@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>LALLA Beauty House — Women-only beauty centre in Casablanca · Demo</title>
+<meta name="description" content="Book hair, nails, skin, hammam, massage and make-up with the right specialist, plan your bridal day and collect Glow points. A demo beauty-centre website by MBN DEV." />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#fbf3ee" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="LALLA" />
+<link rel="icon" href="/demos/beauty/icon.svg" type="image/svg+xml" />
+<link rel="manifest" href="/demos/beauty/manifest.webmanifest" />
+<meta property="og:title" content="LALLA Beauty House — demo by MBN DEV" />
+<meta property="og:description" content="A beauty-centre website with specialist-based booking, a ritual finder, bridal requests, Glow points, gift cards and a full owner dashboard." />
+<link rel="preload" href="/demos/beauty/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/demos/beauty/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="/demos/beauty/css/fonts.css" />
+<link rel="stylesheet" href="/demos/beauty/css/site.css" />
+</head>
+<body>
+<a class="skip" href="#book">Skip to treatments</a>
+
+<!-- Demo notice (MBN DEV) -->
+<div class="demobar" id="demobar">
+  <span class="dot"></span><span data-t="demoBar"></span>
+  <a href="https://mbndev.ma/contact" target="_blank" rel="noopener" data-t="demoCta"></a>
+  <button class="x" id="demobarClose" aria-label="Close">×</button>
+</div>
+<div class="announce" id="announce" hidden><span id="announceText"></span></div>
+
+<div class="sprog" aria-hidden="true"></div>
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="LALLA Beauty House">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="var(--rose)"/><g fill="#fff6f2"><ellipse cx="20" cy="11" rx="4" ry="7"/><ellipse cx="20" cy="11" rx="4" ry="7" transform="rotate(72 20 20)"/><ellipse cx="20" cy="11" rx="4" ry="7" transform="rotate(144 20 20)"/><ellipse cx="20" cy="11" rx="4" ry="7" transform="rotate(216 20 20)"/><ellipse cx="20" cy="11" rx="4" ry="7" transform="rotate(288 20 20)"/></g><circle cx="20" cy="20" r="4.2" fill="var(--gold)"/></svg>
+    <span>LALLA<small data-t="brandSub"></small></span>
+  </a>
+  <nav class="links" aria-label="Sections">
+    <a href="#book" data-t="nav_book"></a><a href="#team" data-t="nav_team"></a>
+    <a href="#bridal" data-t="nav_bridal"></a><a href="#more" data-t="nav_more"></a><a href="#visit" data-t="nav_visit"></a>
+  </nav>
+  <div class="nav-end">
+    <span class="status" id="navStatus"></span>
+    <div id="langs"></div>
+    <button class="iconbtn" id="myBtn" aria-label="My bookings"></button>
+    <button class="btn rose sm hide-s" id="navBook" data-t="bookTreatment"></button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" id="heroSec">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow tagline"><span class="spark"></span><span data-t="heroEyebrow"></span></p>
+        <h1 id="heroTitle"><span data-t="heroA"></span> <em data-t="heroB"></em></h1>
+        <p class="lead" data-t="heroLead"></p>
+        <div class="quick" role="group" data-t-aria="quickLabel">
+          <label class="quick-field"><small data-t="iWant"></small><select id="quickSvc"></select></label>
+          <button class="btn rose glow" id="heroBook"><span data-t="findMyTime"></span><span data-ic="arrowRight"></span></button>
+        </div>
+        <button class="link-btn" id="heroBridal"><span data-ic="gem"></span><span data-t="bridalCta"></span><span data-ic="arrowRight"></span></button>
+      </div>
+      <div class="collage" id="collage">
+        <span class="bloom-bg" id="bloomBg" aria-hidden="true"></span>
+        <div class="shape main"><div class="m" id="heroArt"></div></div>
+        <div class="shape fpic"><div class="m" id="heroOrb"></div></div>
+        <div class="shape petal"><div class="m" id="heroBean"></div></div>
+        <div class="stamp" aria-hidden="true"><svg viewBox="0 0 120 120"><defs><path id="ring" d="M60 60m-46 0a46 46 0 1 1 92 0a46 46 0 1 1-92 0"/></defs><text><textPath href="#ring" id="stampText"></textPath></text></svg><i></i></div>
+        <span class="chip float f1" id="chipOpen"></span>
+        <span class="chip float f3" id="chipRate"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="book">
+    <div class="wrap">
+      <div class="sec-head rv"><p class="eyebrow" data-t="s_book_eyebrow"></p><h2><span data-t="s_book_a"></span> <em data-t="s_book_b"></em></h2><p class="sub" data-t="s_book_sub"></p></div>
+      <div class="menu">
+        <aside class="menu-side">
+          <div class="menu-cats" id="svcFilters" role="tablist"></div>
+          <figure class="menu-cover" id="menuCover" hidden></figure>
+        </aside>
+        <div class="menu-main">
+          <div class="menu-head">
+            <h3 id="menuTitle"></h3>
+            <input class="menu-search" id="svcSearch" type="search" autocomplete="off" data-t-ph="searchTreat" data-t-aria="searchTreat" />
+          </div>
+          <div class="menu-list" id="svcGrid"></div>
+        </div>
+      </div>
+      <details class="ritual" id="ritual">
+        <summary><span data-ic="sparkles"></span><span data-t="ritualHelp"></span><span class="chev" data-ic="chevron"></span></summary>
+        <div class="finder" id="finder"></div>
+      </details>
+    </div>
+  </section>
+
+  <section class="sec blush" id="team">
+    <div class="wrap">
+      <div class="sec-head rv"><p class="eyebrow" data-t="s_team_eyebrow"></p><h2><span data-t="s_team_a"></span> <em data-t="s_team_b"></em></h2><p class="sub" data-t="s_team_sub"></p></div>
+      <div class="team-grid" id="teamGrid"></div>
+    </div>
+  </section>
+
+  <section class="sec plum" id="bridal">
+    <div class="wrap">
+      <div class="bridal-top">
+        <div class="sec-head rv"><p class="eyebrow" data-t="s_bridal_eyebrow"></p><h2><span data-t="s_bridal_a"></span> <em data-t="s_bridal_b"></em></h2><p class="sub" data-t="s_bridal_sub"></p></div>
+        <div class="bridal-pic nophoto" id="bridalPic"></div>
+      </div>
+      <div class="packs" id="bridalGrid"></div>
+      <div class="quote-box" id="quoteBox"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="more">
+    <div class="wrap">
+      <div class="tabs2" role="tablist">
+        <button class="tab2 on" role="tab" aria-selected="true" aria-controls="club" data-moretab="club"><span data-t="nav_club"></span></button>
+        <button class="tab2" role="tab" aria-selected="false" aria-controls="shop" data-moretab="shop"><span data-t="nav_shop"></span></button>
+      </div>
+      <div class="pane" id="club" role="tabpanel">
+      <div class="sec-head rv"><p class="eyebrow" data-t="s_club_eyebrow"></p><h2><span data-t="s_club_a"></span> <em data-t="s_club_b"></em></h2><p class="sub" data-t="s_club_sub"></p></div>
+      <div class="club-top">
+        <div class="points-card" id="pointsCard"></div>
+        <div class="gift-box" id="giftBox"></div>
+      </div>
+      <h3 class="mini-h" data-t="plansT"></h3>
+      <div class="plans" id="plans"></div>
+    </div>
+      <div class="pane" id="shop" role="tabpanel" hidden>
+      <div class="sec-head rv"><p class="eyebrow" data-t="s_shop_eyebrow"></p><h2><span data-t="s_shop_a"></span> <em data-t="s_shop_b"></em></h2><p class="sub" data-t="s_shop_sub"></p></div>
+      <div class="prod-grid" id="prodGrid"></div>
+    </div>
+    </div>
+  </section>
+
+  <section class="sec blush" id="reviews">
+    <div class="wrap">
+      <div class="sec-head rv"><p class="eyebrow" data-t="s_rev_eyebrow"></p><h2><span data-t="s_rev_a"></span> <em data-t="s_rev_b"></em></h2></div>
+      <div class="rev-top" id="revTop"></div>
+      <div class="rev-marquee"><div class="track" id="revGrid"></div></div>
+    </div>
+  </section>
+
+  <section class="sec moments" id="moments" hidden>
+    <div class="wrap">
+      <div class="sec-head rv"><p class="eyebrow" data-t="momentsEyebrow"></p><h2><span data-t="momentsA"></span> <em data-t="momentsB"></em></h2><p class="sub" data-t="momentsSub"></p></div>
+      <div class="mosaic" id="mosaic"></div>
+    </div>
+  </section>
+
+  <section class="sec blush" id="visit">
+    <div class="wrap">
+      <div class="sec-head rv"><p class="eyebrow" data-t="s_visit_eyebrow"></p><h2><span data-t="s_visit_a"></span> <em data-t="s_visit_b"></em></h2></div>
+      <div class="visit-grid">
+        <div class="visit-card" id="visitInfo"></div>
+        <div class="visit-card" id="hoursCard"></div>
+        <div class="visit-card faq" id="faq"></div>
+      </div>
+      <form class="news" id="newsForm">
+        <div><h3 data-t="newsT"></h3><p data-t="newsP"></p></div>
+        <div class="news-row"><input type="email" id="newsEmail" required autocomplete="email" data-t-ph="emailPh" /><button class="btn rose" type="submit" data-t="subscribe"></button></div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-row"><b>LALLA</b><span data-t="footTag"></span></div>
+    <p class="fine" data-t="footFine"></p>
+    <p class="fine"><a href="/demo/beauty/admin" data-t="ownerLink"></a> · <a href="https://mbndev.ma" target="_blank" rel="noopener">MBN DEV</a></p>
+  </div>
+</footer>
+
+<nav class="tabbar" aria-label="Quick">
+  <a href="#top" data-tab="top"><span data-ic="home"></span><small data-t="tab_home"></small></a>
+  <a href="#team" data-tab="team"><span data-ic="users"></span><small data-t="nav_team"></small></a>
+  <button class="tab-book" id="tabBook" aria-label="Book"><span data-ic="sparkles"></span></button>
+  <a href="#bridal" data-tab="bridal"><span data-ic="gem"></span><small data-t="nav_bridal"></small></a>
+  <a href="#visit" data-tab="visit"><span data-ic="pin"></span><small data-t="nav_visit"></small></a>
+</nav>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet modal" id="sheet" role="dialog" aria-modal="true" hidden></div>
+<aside class="sheet drawer" id="bag" role="dialog" aria-modal="true" hidden></aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="/demos/beauty/js/site.js"></script>
+<script src="/demos/_shared/wa-chat.js" data-demo="beauty" data-biz="LALLA" data-accent="#b0516f" defer></script>
+</body>
+</html>

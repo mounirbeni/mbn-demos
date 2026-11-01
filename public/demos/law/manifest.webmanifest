@@ -1,0 +1,11 @@
+{
+  "name": "Cabinet Alaoui — Demo",
+  "short_name": "Alaoui",
+  "description": "Demo law-firm website by MBN DEV",
+  "start_url": "/demo/law",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4eedf",
+  "theme_color": "#0f2a24",
+  "icons": [{ "src": "/demos/law/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
