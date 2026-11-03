@@ -35,6 +35,8 @@
     beauty: { en: ['Is there a slot this Saturday?', 'Price for bridal make-up?', 'Do you have hammam today?'], fr: ['Un créneau ce samedi ?', 'Prix du maquillage mariée ?', 'Le hammam est disponible aujourd’hui ?'], ar: ['هل يوجد موعد هذا السبت؟', 'كم سعر مكياج العروس؟', 'هل الحمّام متاح اليوم؟'] },
     law: { en: ['I need advice on a divorce', 'How much is a first consultation?', 'Can we meet this week?'], fr: ['J’ai besoin d’un conseil pour un divorce', 'Combien coûte la première consultation ?', 'Un rendez-vous cette semaine ?'], ar: ['أحتاج استشارة في الطلاق', 'كم ثمن الاستشارة الأولى؟', 'هل يمكن موعد هذا الأسبوع؟'] },
     rent: { en: ['Is a car free this weekend?', 'Can you deliver to my hotel?', 'Price for 7 days?'], fr: ['Une voiture libre ce week-end ?', 'Livraison à mon hôtel possible ?', 'Prix pour 7 jours ?'], ar: ['هل توجد سيارة متاحة هذا الأسبوع؟', 'هل توصلون السيارة إلى فندقي؟', 'كم السعر لـ7 أيام؟'] },
+    ceramics: { en: ['Is there a workshop for beginners?', 'Can you come to teach in my city?', 'Can I buy a gift voucher?'], fr: ['Un atelier pour débutants est prévu ?', 'Pouvez-vous venir enseigner dans ma ville ?', 'Puis-je offrir un bon cadeau ?'], ar: ['هل توجد ورشة للمبتدئين؟', 'هل يمكنكم القدوم للتدريس في مدينتي؟', 'هل يمكنني شراء بطاقة هدية؟'] },
+    _default: { en: ['Are you open today?', 'What are your prices?', 'Can I book an appointment?'], fr: ['Vous êtes ouverts aujourd’hui ?', 'Quels sont vos tarifs ?', 'Puis-je prendre rendez-vous ?'], ar: ['هل أنتم مفتوحون اليوم؟', 'ما هي أسعاركم؟', 'هل يمكنني حجز موعد؟'] },
   };
   const biz = cfg.biz || 'Demo';
   const accent = cfg.accent || '#25d366';
@@ -88,7 +90,7 @@
 
   function draw() {
     const t = T[lang()];
-    const chips = (CHIPS[cfg.demo] || CHIPS.rent)[lang()];
+    const chips = (CHIPS[cfg.demo] || CHIPS._default)[lang()];
     let pan = '';
     if (open) {
       const sent = thread.some((m) => m.me);
@@ -116,7 +118,7 @@ ${sent ? '' : `<form class="wac-ft"><input name="m" placeholder="${esc(t.ph)}" a
       open = a === 'toggle' ? !open : false;
       try { sessionStorage.setItem('wac-seen', '1'); } catch { /* private mode */ }
       draw(); if (open) root.querySelector('.wac-ft input')?.focus(); else root.querySelector('.wac-fab').focus();
-    } else if (a === 'chip') say((CHIPS[cfg.demo] || CHIPS.rent)[lang()][+b.dataset.i]);
+    } else if (a === 'chip') say((CHIPS[cfg.demo] || CHIPS._default)[lang()][+b.dataset.i]);
     else if (a === 'again') { thread = []; draw(); root.querySelector('.wac-ft input')?.focus(); }
   });
   root.addEventListener('submit', (e) => { e.preventDefault(); say(new FormData(e.target).get('m')); });
