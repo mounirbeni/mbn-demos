@@ -1,7 +1,7 @@
 // Demo data layer: everything lives in this browser (localStorage) and is shared live between the
 // public site and the atelier dashboard (BroadcastChannel). Seeded relative to today so it never looks old.
 (function () {
-  const KEY = 'atelier_safi_v1';
+  const KEY = 'atelier_safi_v2';
   const bc = 'BroadcastChannel' in window ? new BroadcastChannel('atelier_safi') : null;
   const listeners = [];
   const day = 864e5;
@@ -64,13 +64,24 @@
       { id: uid('h'), org: 'Association Terre & Feu', city: 'Lyon', country: 'FR', people: 12, period: 'Printemps', contact: 'terreetfeu@mail.com', note: 'Nous avons un four et 12 tours.', at: Date.now() - 2 * day, status: 'new' },
       { id: uid('h'), org: 'École d’art Saint-Luc', city: 'Bruxelles', country: 'BE', people: 20, period: 'Mars', contact: 'ateliers@stluc.be', note: 'Pour nos étudiants de 2e année.', at: Date.now() - 6 * day, status: 'contacted' },
     ];
-    return { v: 1, sessions, bookings, messages, interests, hosts, payments: bookings.filter((b) => b.paid > 0).map((b) => ({ id: uid('p'), bookingRef: b.ref, amount: b.paid, currency: b.currency, method: ['card', 'transfer', 'cash'][b.paid % 3], at: b.createdAt })) };
+    const past = sessions.find((x) => x.start < plus(0));
+    const pastBookings = bookings.filter((b) => b.sessionId === past.id).slice(0, 2);
+    const reviews = pastBookings.map((b, i) => ({ id: uid('r'), bookingRef: b.ref, name: b.name.split(' ')[0], rating: 5, text: i ? 'Cinq jours intenses et passionnants, je repars avec mes pièces et l’envie de continuer.' : 'Un vrai partage de savoir-faire. On sent l’amour du métier à chaque geste.', at: Date.now() - (i + 2) * day, status: 'pending' }));
+    const vouchers = [{ id: uid('v'), code: 'CADEAU-7F3K', amount: 1000, balance: 1000, buyer: 'Inès Haddad', to: 'Camille', message: 'Joyeux anniversaire !', contact: '+33 6 45 67 89 01', at: Date.now() - 4 * day, paid: true }];
+    const groups = [{ id: uid('g'), kind: 'company', org: 'Agence Atlas Events', people: 18, date: plus(45), city: 'Marrakech', budget: '20 000 DH', contact: 'events@atlas.ma', note: 'Team building pour un séminaire.', at: Date.now() - 3 * day, status: 'new' }];
+    const orders = [{ id: uid('o'), ref: 'CMD-' + Math.floor(1000 + Math.random() * 9000), items: [{ id: 'p1', qty: 2 }], name: 'Emma Dubois', contact: '+32 470 12 34 56', delivery: 'abroad', address: 'Bruxelles', total: 950, at: Date.now() - day, status: 'new' }];
+    const outbox = [
+      { id: uid('n'), kind: 'confirmation', to: `${bookings[0].name} · ${bookings[0].phone}`, text: `Réservation ${bookings[0].ref} confirmée. Acompte reçu, le solde est à régler avant la session.`, at: Date.now() - 2 * day, status: 'sent' },
+      { id: uid('n'), kind: 'reminder', to: `${bookings[1].name} · ${bookings[1].phone}`, text: 'Rappel la veille : adresse de l’atelier, horaire 9 h 30, tenue qui ne craint pas la terre.', at: Date.now() - 1 * day, status: 'sent' },
+      { id: uid('n'), kind: 'voucher', to: 'Inès Haddad · +33 6 45 67 89 01', text: 'Bon cadeau CADEAU-7F3K de 1 000 DH pour Camille, valable 12 mois.', at: Date.now() - 4 * day, status: 'sent' },
+    ];
+    return { v: 2, sessions, bookings, messages, interests, hosts, reviews, vouchers, groups, orders, outbox, payments: bookings.filter((b) => b.paid > 0).map((b) => ({ id: uid('p'), bookingRef: b.ref, amount: b.paid, currency: b.currency, method: ['card', 'transfer', 'cash'][b.paid % 3], at: b.createdAt })) };
   }
 
   let db;
   function load() {
     try { db = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { db = null; }
-    if (!db || db.v !== 1) { db = seed(); persist(false); }
+    if (!db || db.v !== 2) { db = seed(); persist(false); }
     return db;
   }
   function persist(broadcast = true) {
@@ -81,6 +92,8 @@
   if (bc) bc.onmessage = () => { load(); listeners.forEach((fn) => fn(db)); };
   window.addEventListener('storage', (e) => { if (e.key === KEY) { load(); listeners.forEach((fn) => fn(db)); } });
 
+  // Automatic messages the real system sends (email / WhatsApp); the demo logs them so the owner sees them.
+  const notify = (kind, to, text) => db.outbox.unshift({ id: uid('n'), kind, to, text, at: Date.now(), status: 'sent' });
   const fmt = (amount, cur) => (cur === 'EUR' ? `${Math.round(amount).toLocaleString('fr-FR')} €` : `${Math.round(amount).toLocaleString('fr-FR')} DH`);
   const format = (id) => window.ATELIER.formats.find((f) => f.id === id);
   const endOf = (s) => iso(new Date(s.start).getTime() + (format(s.format).days - 1) * day);
@@ -93,16 +106,25 @@
     on: (fn) => listeners.push(fn),
     get db() { return db; },
     session: (id) => db.sessions.find((s) => s.id === id),
-    book({ sessionId, seats, name, email, phone, country, level, notes, pay }) {
+    book({ sessionId, seats, name, email, phone, country, level, notes, pay, voucher }) {
       const s = this.session(sessionId);
       const free = seatsLeft(s);
       const waitlist = free < seats;
       const { amount, currency } = priceOf(s);
       const total = waitlist ? 0 : amount * seats;
-      const paid = waitlist ? 0 : pay === 'deposit' ? Math.round(total * window.ATELIER.depositPct / 100) : pay === 'full' ? total : 0;
+      // A gift voucher pays part or all of the booking (vouchers are in MAD).
+      const v = voucher && !waitlist ? this.voucher(voucher) : null;
+      const fromVoucher = v ? Math.min(v.balance / (currency === 'EUR' ? window.ATELIER.eurToMad : 1), total) : 0;
+      const rest = total - fromVoucher;
+      const paidNow = waitlist ? 0 : pay === 'deposit' ? Math.round(rest * window.ATELIER.depositPct / 100) : pay === 'full' ? rest : 0;
+      const paid = Math.round(fromVoucher + paidNow);
       const b = { id: uid('b'), ref: ref(), sessionId, name, email, phone, country, seats, level, notes, total, currency, paid, status: waitlist ? 'waitlist' : paid > 0 ? 'confirmed' : 'pending', source: 'site', createdAt: Date.now() };
       db.bookings.unshift(b);
-      if (paid > 0) db.payments.unshift({ id: uid('p'), bookingRef: b.ref, amount: paid, currency, method: 'card', at: Date.now() });
+      if (v && fromVoucher > 0) { v.balance = Math.max(0, Math.round(v.balance - fromVoucher * (currency === 'EUR' ? window.ATELIER.eurToMad : 1))); db.payments.unshift({ id: uid('p'), bookingRef: b.ref, amount: Math.round(fromVoucher), currency, method: 'voucher', at: Date.now() }); }
+      if (paidNow > 0) db.payments.unshift({ id: uid('p'), bookingRef: b.ref, amount: paidNow, currency, method: 'card', at: Date.now() });
+      const f = format(s.format);
+      notify(waitlist ? 'waitlist' : 'confirmation', `${name} · ${email} · ${phone}`, waitlist ? `Liste d’attente : ${f.fr.name}, ${s.city}, ${s.start}. Vous serez prévenu dès qu’une place se libère.` : `Réservation ${b.ref} confirmée : ${f.fr.name}, ${s.city}, ${s.start}. Payé ${fmt(paid, currency)} sur ${fmt(total, currency)}.`);
+      notify('reminder', `${name} · ${phone}`, `Programmé la veille (${s.start}) : rappel de l’adresse, de l’horaire et de ce qu’il faut apporter.`);
       persist();
       return b;
     },
@@ -116,7 +138,8 @@
     promote(id) {
       const b = db.bookings.find((x) => x.id === id); if (!b) return false;
       const s = this.session(b.sessionId); if (seatsLeft(s) < b.seats) return false;
-      const { amount, currency } = priceOf(s); b.total = amount * b.seats; b.currency = currency; b.status = 'pending'; persist(); return true;
+      const { amount, currency } = priceOf(s); b.total = amount * b.seats; b.currency = currency; b.status = 'pending';
+      notify('waitlist', `${b.name} · ${b.phone}`, `Bonne nouvelle : une place s’est libérée pour ${format(s.format).fr.name} à ${s.city}. Lien de paiement envoyé.`); persist(); return true;
     },
     toggleAttended(id) { const b = db.bookings.find((x) => x.id === id); if (b) { b.attended = !b.attended; persist(); } },
     message({ from, name, contact, ref: r, text }) { db.messages.unshift({ id: uid('m'), from, name, contact, ref: r || null, text, at: Date.now(), read: from === 'atelier' }); persist(); },
@@ -128,6 +151,26 @@
       if (s.id) Object.assign(this.session(s.id), s); else db.sessions.push({ ...s, id: uid('s'), status: 'open' });
       db.sessions.sort((a, b) => a.start.localeCompare(b.start)); persist();
     },
+    // Gift vouchers, groups, shop, reviews, broadcasts
+    voucher: (code) => db.vouchers.find((v) => v.code.toUpperCase() === String(code || '').trim().toUpperCase() && v.balance > 0) || null,
+    buyVoucher({ amount, buyer, to, message, contact }) {
+      const v = { id: uid('v'), code: `CADEAU-${Math.random().toString(36).slice(2, 6).toUpperCase()}`, amount, balance: amount, buyer, to, message, contact, at: Date.now(), paid: true };
+      db.vouchers.unshift(v); db.payments.unshift({ id: uid('p'), bookingRef: v.code, amount, currency: 'MAD', method: 'card', at: Date.now() });
+      notify('voucher', `${buyer} · ${contact}`, `Bon cadeau ${v.code} de ${fmt(amount, 'MAD')} pour ${to}, valable 12 mois.`); persist(); return v;
+    },
+    group(g) { db.groups.unshift({ id: uid('g'), status: 'new', at: Date.now(), ...g }); persist(); },
+    setGroup(id, status) { const g = db.groups.find((x) => x.id === id); if (g) { g.status = status; persist(); } },
+    order({ items, name, contact, delivery, address }) {
+      const P = window.ATELIER.pieces; let total = 0;
+      for (const it of items) { const p = P.find((x) => x.id === it.id); total += p.priceMAD * it.qty; }
+      total += window.ATELIER.shippingMAD[delivery] || 0;
+      const o = { id: uid('o'), ref: `CMD-${Math.floor(1000 + Math.random() * 9000)}`, items, name, contact, delivery, address, total, at: Date.now(), status: 'new' };
+      db.orders.unshift(o); notify('order', `${name} · ${contact}`, `Commande ${o.ref} reçue (${fmt(total, 'MAD')}). Nous vous écrivons pour le paiement et l’envoi.`); persist(); return o;
+    },
+    setOrder(id, status) { const o = db.orders.find((x) => x.id === id); if (o) { o.status = status; persist(); } },
+    review({ bookingRef, name, rating, text }) { db.reviews.unshift({ id: uid('r'), bookingRef, name, rating, text, at: Date.now(), status: 'pending' }); persist(); },
+    setReview(id, status) { const r = db.reviews.find((x) => x.id === id); if (r) { r.status = status; persist(); } },
+    broadcast(targets, text, label) { targets.forEach((t) => notify('broadcast', t, text)); persist(); return targets.length; },
     reset() { db = seed(); persist(); },
   };
   load();
