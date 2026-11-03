@@ -1,5 +1,6 @@
 // Atelier dashboard: sessions and rosters, bookings and payments, one inbox for every client message,
-// demand by city (where to run the next session abroad), host requests, contacts, settings.
+// demand by city, host and group requests, shop orders and gift vouchers, reviews moderation,
+// announcements and the log of automatic messages, contacts, settings.
 (function () {
   const C = window.ATELIER;
   const S = window.Store;
@@ -49,10 +50,10 @@
 
   // ---------- Shell ----------
   const unread = () => new Set(S.db.messages.filter((m) => !m.read && m.from === 'client').map((m) => m.contact)).size;
-  const tabs = () => [['home', 'Tableau de bord'], ['sessions', 'Sessions'], ['bookings', 'Réservations'], ['inbox', 'Messages', unread()], ['demand', 'Demandes', S.db.hosts.filter((h) => h.status === 'new').length], ['contacts', 'Participants'], ['payments', 'Paiements'], ['settings', 'Réglages']];
+  const tabs = () => [['home', 'Tableau de bord'], ['sessions', 'Sessions'], ['bookings', 'Réservations'], ['inbox', 'Messages', unread()], ['demand', 'Demandes', S.db.hosts.filter((h) => h.status === 'new').length + S.db.groups.filter((g) => g.status === 'new').length], ['sales', 'Boutique & cadeaux', S.db.orders.filter((o) => o.status === 'new').length], ['reviews', 'Avis', S.db.reviews.filter((r) => r.status === 'pending').length], ['comms', 'Communication'], ['contacts', 'Participants'], ['payments', 'Paiements'], ['settings', 'Réglages']];
   function render() {
     if (!unlocked) return gate();
-    const views = { home, sessions, bookings, inbox, demand, contacts, payments, settings };
+    const views = { home, sessions, bookings, inbox, demand, sales, reviews, comms, contacts, payments, settings };
     $('#root').innerHTML = `<div class="dash"><aside class="side-nav"><a class="logo" href="/demo/ceramics" style="padding:6px 8px 20px"><span class="mark" style="width:36px">${Art.plate(3, 36)}</span><span><b>${esc(C.brand.name)}</b><small>Espace atelier</small></span></a>
       ${tabs().map(([k, l, n]) => `<button data-tab="${k}" class="${tab === k ? 'on' : ''}">${l}${n ? `<span class="count">${n}</span>` : ''}</button>`).join('')}
       <div class="bottom"><a href="/demo/ceramics" target="_blank">Voir le site public ↗</a><span>Démo MBN DEV · données dans ce navigateur</span></div></aside>
@@ -146,7 +147,49 @@
         <button class="btn btn-ghost btn-sm" data-plan="${esc(city)}|${esc(country)}">Programmer</button></div>`; }).join('')}</div></div>
       <div class="card"><h2>Organisateurs (accueillir un atelier)</h2>${S.db.hosts.map((h) => `<div style="padding:12px 0;border-bottom:1px solid #f1ebe1"><div class="row-flex"><b style="flex:1">${esc(h.org)}</b><span class="st ${h.status}">${{ new: 'Nouveau', contacted: 'Contacté', done: 'Planifié' }[h.status]}</span></div>
         <div class="muted" style="font-size:13px">${FLAG[h.country] || ''} ${esc(h.city)} · ${h.people || '?'} pers. · ${esc(h.period || '')} · ${esc(h.contact)}</div>${h.note ? `<p style="font-size:14px;margin:6px 0">${esc(h.note)}</p>` : ''}
-        <div class="row-flex"><button class="btn btn-ghost btn-sm" data-host="${h.id}|contacted">Marquer contacté</button><button class="btn btn-ghost btn-sm" data-host="${h.id}|done">Session planifiée</button></div></div>`).join('') || '<p class="muted">Aucune demande.</p>'}</div></div>`;
+        <div class="row-flex"><button class="btn btn-ghost btn-sm" data-host="${h.id}|contacted">Marquer contacté</button><button class="btn btn-ghost btn-sm" data-host="${h.id}|done">Session planifiée</button></div></div>`).join('') || '<p class="muted">Aucune demande.</p>'}</div></div>
+      <div class="card" style="margin-top:14px"><h2>Groupes et entreprises (atelier privé)</h2>${S.db.groups.map((g) => `<div style="padding:12px 0;border-bottom:1px solid #f1ebe1"><div class="row-flex"><b style="flex:1">${esc(g.org)}</b><span class="muted" style="font-size:12px">${esc(GKIND[g.kind] || g.kind || '')}</span><span class="st ${g.status}">${{ new: 'Nouveau', contacted: 'Devis envoyé', done: 'Confirmé' }[g.status]}</span></div>
+        <div class="muted" style="font-size:13px">${esc(g.city || '')} · ${g.people || '?'} pers. · ${g.date ? d(g.date) : ''}${g.budget ? ` · budget ${esc(g.budget)}` : ''} · ${esc(g.contact)}</div>${g.note ? `<p style="font-size:14px;margin:6px 0">${esc(g.note)}</p>` : ''}
+        <div class="row-flex">${contactBtn(g.contact, `Bonjour, merci pour votre demande d’atelier privé pour ${g.people || ''} personnes. Voici notre proposition : `)}<button class="btn btn-ghost btn-sm" data-group="${g.id}|contacted">Devis envoyé</button><button class="btn btn-ghost btn-sm" data-group="${g.id}|done">Confirmé</button></div></div>`).join('') || '<p class="muted">Aucune demande de groupe.</p>'}</div>`;
+  }
+
+
+  const GKIND = { company: 'Entreprise', school: 'École', friends: 'Amis / fête', association: 'Association', other: 'Autre' };
+  const isPhoneish = (c) => /^\+?\d[\d\s]{6,}$/.test(String(c || '').trim());
+  const contactBtn = (c, text) => (isPhoneish(c) ? `<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="${waLink(c, text)}">WhatsApp</a>` : `<a class="btn btn-ghost btn-sm" href="mailto:${esc(c)}?body=${encodeURIComponent(text)}">Email</a>`);
+  const OSTATUS = { new: 'Nouvelle', paid: 'Payée', shipped: 'Expédiée', delivered: 'Livrée', cancelled: 'Annulée' };
+  function sales() {
+    const vSold = S.db.vouchers.reduce((n, v) => n + v.amount, 0); const vLeft = S.db.vouchers.reduce((n, v) => n + v.balance, 0);
+    const oTot = S.db.orders.filter((o) => o.status !== 'cancelled').reduce((n, o) => n + o.total, 0);
+    return `<h1>Boutique & bons cadeaux</h1><div class="kpis"><div class="kpi"><span>Bons vendus</span><b>${S.fmt(vSold, 'MAD')}</b></div><div class="kpi"><span>Bons non utilisés</span><b>${S.fmt(vLeft, 'MAD')}</b></div>
+      <div class="kpi"><span>Commandes</span><b>${S.db.orders.length}</b></div><div class="kpi"><span>Ventes boutique</span><b>${S.fmt(oTot, 'MAD')}</b></div></div>
+      <div class="card table-wrap"><h2>Commandes de la boutique</h2><table><thead><tr><th>Réf.</th><th>Client</th><th>Pièces</th><th>Livraison</th><th>Total</th><th>Statut</th><th></th></tr></thead><tbody>
+      ${S.db.orders.map((o) => `<tr><td>${esc(o.ref)}<div class="muted" style="font-size:12px">${ago(o.at)}</div></td><td><b>${esc(o.name)}</b><div class="muted" style="font-size:12px">${esc(o.contact)}</div></td>
+        <td>${o.items.map((it) => `${esc(C.pieces.find((p) => p.id === it.id)?.fr || it.id)} × ${it.qty}`).join('<br>')}</td><td>${o.delivery === 'pickup' ? 'Retrait atelier' : o.delivery === 'morocco' ? 'Maroc' : 'International'}<div class="muted" style="font-size:12px">${esc(o.address || '')}</div></td>
+        <td><b>${S.fmt(o.total, 'MAD')}</b></td><td><select class="field" data-order="${o.id}" style="padding:6px 10px;font-size:13px">${Object.entries(OSTATUS).map(([k, l]) => `<option value="${k}" ${o.status === k ? 'selected' : ''}>${l}</option>`).join('')}</select></td>
+        <td>${contactBtn(o.contact, `Bonjour ${o.name.split(' ')[0]}, merci pour votre commande ${o.ref} (${S.fmt(o.total, 'MAD')}). `)}</td></tr>`).join('') || '<tr><td colspan="7" class="muted">Aucune commande.</td></tr>'}</tbody></table></div>
+      <div class="card table-wrap" style="margin-top:14px"><h2>Bons cadeaux</h2><table><thead><tr><th>Code</th><th>De → Pour</th><th>Montant</th><th>Reste</th><th>Acheté le</th><th>Statut</th></tr></thead><tbody>
+      ${S.db.vouchers.map((v) => `<tr><td><b>${esc(v.code)}</b></td><td>${esc(v.buyer)} → ${esc(v.to)}<div class="muted" style="font-size:12px">${esc(v.contact || '')}</div></td><td>${S.fmt(v.amount, 'MAD')}</td><td>${S.fmt(v.balance, 'MAD')}</td><td>${ago(v.at)}</td>
+        <td><span class="st ${v.balance > 0 ? 'active' : 'used'}">${v.balance <= 0 ? 'Utilisé' : v.balance < v.amount ? 'Partiel' : 'Actif'}</span></td></tr>`).join('') || '<tr><td colspan="6" class="muted">Aucun bon.</td></tr>'}</tbody></table></div>`;
+  }
+  function reviews() {
+    const RS = { pending: 'À valider', approved: 'Publié', hidden: 'Masqué' };
+    const list = S.db.reviews.slice().sort((a, b) => (a.status === 'pending' ? -1 : 1) - (b.status === 'pending' ? -1 : 1) || b.at - a.at);
+    return `<h1>Avis</h1><p class="muted">Les participants laissent un avis depuis leur espace après la session. Rien n’apparaît sur le site avant votre validation.</p>
+      <div style="display:grid;gap:12px;margin-top:18px">${list.map((r) => `<div class="card"><div class="row-flex"><b style="flex:1">${esc(r.name)} <span class="stars">${'★'.repeat(r.rating)}</span></b><span class="muted" style="font-size:12px">${esc(r.bookingRef)} · ${ago(r.at)}</span><span class="st ${r.status === 'pending' ? 'new' : r.status}">${RS[r.status]}</span></div>
+        <p style="margin:10px 0">${esc(r.text)}</p><div class="row-flex">${r.status !== 'approved' ? `<button class="btn btn-primary btn-sm" data-review="${r.id}|approved">Publier sur le site</button>` : ''}${r.status !== 'hidden' ? `<button class="btn btn-ghost btn-sm" data-review="${r.id}|hidden">Masquer</button>` : ''}</div></div>`).join('') || '<p class="muted">Aucun avis pour l’instant.</p>'}</div>`;
+  }
+  const KIND = { confirmation: 'Confirmation', waitlist: 'Liste d’attente', reminder: 'Rappel', voucher: 'Bon cadeau', order: 'Commande', broadcast: 'Annonce', balance: 'Solde' };
+  function comms() {
+    const cities = [...new Set(S.db.interests.map((i) => `${i.city}|${i.country}`))];
+    const ups = S.db.sessions.filter((s) => s.start >= S.today());
+    return `<h1>Communication</h1><p class="muted">Les messages automatiques (confirmation, rappel la veille, liste d’attente, bon cadeau, commande) et vos annonces groupées.</p>
+      <div class="grid2" style="margin-top:18px"><div class="card"><h2>Envoyer une annonce</h2><form class="form" id="bc">
+        <label class="lbl">Destinataires<select class="field" name="target">${cities.map((c) => { const [city, country] = c.split('|'); const n = S.db.interests.filter((i) => i.city === city).length; return `<option value="city:${esc(c)}">${FLAG[country] || ''} Intéressés à ${esc(city)} (${n})</option>`; }).join('')}
+          ${ups.map((s) => `<option value="session:${s.id}">Participants · ${esc(fname(s.format))} · ${esc(s.city)} ${d(s.start)}</option>`).join('')}<option value="all">Tous les participants</option></select></label>
+        <textarea class="field" name="text" rows="4" required>Bonne nouvelle : une session est programmée près de chez vous ! Les places sont limitées, réservez ici : mbndev-demos.vercel.app/demo/ceramics</textarea>
+        <button class="btn btn-primary">Envoyer (email + WhatsApp)</button><p class="muted" style="font-size:12px;margin:0">Démo : l’envoi est simulé et enregistré dans le journal. En production : emails automatiques et WhatsApp Business.</p></form></div>
+      <div class="card"><h2>Journal des envois (${S.db.outbox.length})</h2><div class="outbox">${S.db.outbox.slice(0, 40).map((o) => `<div class="o"><span class="st confirmed">${KIND[o.kind] || esc(o.kind)}</span><div><b>${esc(o.to)}</b><div class="muted">${esc(o.text)}</div></div><span class="muted" style="font-size:11px;white-space:nowrap">${ago(o.at)}</span></div>`).join('') || '<p class="muted">Rien pour l’instant.</p>'}</div></div></div>`;
   }
 
   function contacts() {
@@ -164,7 +207,7 @@
     return `<h1>Paiements</h1><div class="kpis"><div class="kpi"><span>Total encaissé (DH)</span><b>${S.fmt(tot('MAD'), 'MAD')}</b></div><div class="kpi"><span>Total encaissé (€)</span><b>${S.fmt(tot('EUR'), 'EUR')}</b></div>
       <div class="kpi"><span>Paiements</span><b>${S.db.payments.length}</b></div><div class="kpi"><span>Acompte demandé</span><b>${C.depositPct} %</b></div></div>
       <div class="card table-wrap"><table><thead><tr><th>Date</th><th>Réf.</th><th>Participant</th><th>Moyen</th><th>Montant</th></tr></thead><tbody>
-      ${S.db.payments.slice().sort((a, b) => b.at - a.at).map((p) => { const b = S.db.bookings.find((x) => x.ref === p.bookingRef); return `<tr><td>${ago(p.at)}</td><td>${esc(p.bookingRef)}</td><td>${esc(b?.name || '')}</td><td>${{ card: 'Carte', transfer: 'Virement', cash: 'Espèces' }[p.method] || esc(p.method)}</td><td><b>${S.fmt(p.amount, p.currency)}</b></td></tr>`; }).join('')}</tbody></table></div>`;
+      ${S.db.payments.slice().sort((a, b) => b.at - a.at).map((p) => { const b = S.db.bookings.find((x) => x.ref === p.bookingRef); return `<tr><td>${ago(p.at)}</td><td>${esc(p.bookingRef)}</td><td>${esc(b?.name || '')}</td><td>${{ card: 'Carte', transfer: 'Virement', cash: 'Espèces', voucher: 'Bon cadeau', paypal: 'PayPal' }[p.method] || esc(p.method)}</td><td><b>${S.fmt(p.amount, p.currency)}</b></td></tr>`; }).join('')}</tbody></table></div>`;
   }
 
   function settings() {
@@ -236,6 +279,16 @@
     document.querySelectorAll('[data-plan]').forEach((el) => { el.onclick = () => { const [city, country] = el.dataset.plan.split('|'); tab = 'sessions'; sessionSheet({ format: 'masterclass', city, country, venue: 'Atelier partenaire', capacity: 10, lang: 'fr' }); }; });
     document.querySelectorAll('[data-quick]').forEach((el) => { el.onclick = () => { const q = ['Bonjour, merci pour votre message ! Voici les prochaines dates : ', 'Il reste des places, je vous envoie le lien de réservation.', 'Tout le matériel est fourni, il suffit d’une tenue qui ne craint pas la terre.'][el.dataset.quick]; $('#reply [name=t]').value = q; $('#reply [name=t]').focus(); }; });
     if ($('#reply')) $('#reply').onsubmit = (e) => { e.preventDefault(); const cur = openContact || S.db.messages[0]?.contact; const last = S.db.messages.find((m) => m.contact === cur && m.from === 'client') || S.db.messages.find((m) => m.contact === cur); S.message({ from: 'atelier', name: last?.name || '', contact: cur, ref: last?.ref, text: new FormData(e.target).get('t') }); S.markRead(cur); openContact = cur; render(); };
+    document.querySelectorAll('[data-group]').forEach((el) => { el.onclick = () => { const [id, st] = el.dataset.group.split('|'); S.setGroup(id, st); render(); }; });
+    document.querySelectorAll('[data-review]').forEach((el) => { el.onclick = () => { const [id, st] = el.dataset.review.split('|'); S.setReview(id, st); toast(st === 'approved' ? 'Avis publié sur le site' : 'Avis masqué'); render(); }; });
+    document.querySelectorAll('[data-order]').forEach((el) => { el.onchange = () => { S.setOrder(el.dataset.order, el.value); toast('Commande mise à jour'); render(); }; });
+    if ($('#bc')) $('#bc').onsubmit = (e) => {
+      e.preventDefault(); const v = Object.fromEntries(new FormData(e.target)); let targets = [];
+      if (v.target.startsWith('city:')) { const [city] = v.target.slice(5).split('|'); targets = S.db.interests.filter((i) => i.city === city).map((i) => i.contact); }
+      else if (v.target.startsWith('session:')) targets = S.db.bookings.filter((b) => b.sessionId === v.target.slice(8) && b.status !== 'cancelled').map((b) => `${b.name} · ${b.phone}`);
+      else targets = [...new Set(S.db.bookings.map((b) => `${b.name} · ${b.phone}`))];
+      const n = S.broadcast([...new Set(targets)], v.text); toast(`Annonce envoyée à ${n} personne(s)`); render();
+    };
     if ($('#newSession')) $('#newSession').onclick = () => sessionSheet();
     if ($('#manual')) $('#manual').onclick = manualSheet;
     if ($('#reset')) $('#reset').onclick = () => { if (confirm('Remettre les données de démo à zéro ?')) { S.reset(); toast('Données réinitialisées'); render(); } };
