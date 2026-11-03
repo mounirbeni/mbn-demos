@@ -146,7 +146,7 @@
   const toast = (msg) => { const el = $('#toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2600); };
   const upcoming = () => S.db.sessions.filter((s) => s.start >= S.today() && s.status === 'open');
   const consentBox = (news = false) => `<label class="consent"><input type="checkbox" name="consent" required> <span>${t().consent} (<a href="#" data-legal="privacy">${t().readPrivacy}</a>)</span></label>${news ? `<label class="consent"><input type="checkbox" name="news"> <span>${t().consentNews}</span></label>` : ''}`;
-  const pieceArt = (p, size) => (p.art[0] === 'vase' ? Art.vase(p.art[1], size * 0.7) : Art.plate(p.art[1], size));
+  const pieceArt = (p, size) => (p.img ? `<img src="/demos/ceramics/img/${p.img}.webp" alt="${esc(p[lang])}" width="600" height="600" loading="lazy">` : p.art[0] === 'vase' ? Art.vase(p.art[1], size * 0.7) : Art.plate(p.art[1], size));
 
   function header() {
     $('#top').innerHTML = `<div class="wrap">
@@ -184,7 +184,7 @@
       <div><p class="eyebrow reveal">${esc(C.brand.tagline[lang])} · ${esc(C.brand.city)}</p><h1 class="serif reveal">${L.heroTitle}</h1><p class="lead reveal">${L.heroLead}</p>
         <div class="cta reveal"><a class="btn btn-primary" href="#ateliers">${L.seeDates}</a><a class="btn btn-ghost" href="#cadeau">${L.nav[2]}</a></div>
         <div class="stats reveal">${L.stats.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join('')}</div></div>
-      <div class="hero-art"><div class="p1">${Art.plate(1, 400)}</div><div class="v1">${Art.vase(2, 150)}</div><div class="p2">${Art.plate(6, 230)}</div>
+      <div class="hero-art photo"><img class="hero-img" src="/demos/ceramics/img/safi.webp" srcset="/demos/ceramics/img/safi-sm.webp 800w, /demos/ceramics/img/safi.webp 1600w" sizes="(max-width: 860px) 100vw, 560px" alt="${esc(C.brand.name)}" width="1600" height="900" fetchpriority="high"><img class="inset" src="/demos/ceramics/img/painting-sm.webp" alt="" width="800" height="450">
         ${next ? `<div class="badge"><span class="muted">${L.badge}</span><b>${esc(fname(S.format(next.format)))}</b>${dateLong(next.start)} · ${esc(next.city)}</div>` : ''}</div></div></section>
     <div class="strip"><div class="row">${[...L.strip, ...L.strip, ...L.strip].map((x) => `<span>${x}</span>`).join('')}</div></div>
 
@@ -203,7 +203,7 @@
         <button class="btn btn-ghost btn-sm" data-format-go="${f.id}">${L.seeDates}</button></article>`).join('')}</div></div></section>
 
     <section class="block artisan" id="artisan"><div class="wrap">
-      <div class="photo-slot reveal">${Art.vase(5, 200)}<small>${L.photo}</small></div>
+      <div class="photo-slot has-img reveal"><img src="/demos/ceramics/img/artisan.webp" srcset="/demos/ceramics/img/artisan-sm.webp 800w, /demos/ceramics/img/artisan.webp 1600w" sizes="(max-width: 860px) 100vw, 480px" alt="${esc(C.brand.artisan)}" width="1600" height="900" loading="lazy"></div>
       <div class="reveal"><p class="eyebrow">${L.artisanEyebrow}</p><p class="quote">${L.artisanQuote}</p><p class="muted" style="font-size:17px">${L.artisanText}</p>
         <p style="font-weight:600;margin:28px 0 0">${L.included}</p><ul class="checks">${C.included[lang].map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div></div></section>
 
@@ -245,7 +245,7 @@
 
     <section class="block"><div class="wrap">
       <div class="head"><div><p class="eyebrow">${L.galleryEyebrow}</p><h2 class="serif">${L.galleryTitle}</h2></div><p class="muted">${L.galleryLead}</p></div>
-      <div class="gallery">${[7, 8, 9, 10, 11, 12, 13, 14].map((n, i) => `<div class="tile reveal">${i % 3 === 1 ? Art.vase(n, 120) : Art.plate(n, 180)}</div>`).join('')}</div></div></section>
+      <div class="gallery">${['painting-sm', 'p-plate-big', 'tajines-sm', 'p-vase', 'pieces-sm', 'p-tajine-blue', 'plates-sm', 'p-bowl'].map((n) => `<div class="tile photo reveal"><img src="/demos/ceramics/img/${n}.webp" alt="" loading="lazy"></div>`).join('')}</div></div></section>
 
     <section class="block faq" style="padding-top:0"><div class="wrap" style="max-width:820px">
       <h2 class="serif" style="font-size:clamp(34px,5vw,54px);text-align:center;margin:0 0 30px">${L.faqTitle}</h2>

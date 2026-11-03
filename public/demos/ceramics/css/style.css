@@ -316,3 +316,22 @@ footer [data-legal] { cursor: pointer; }
   .logo .mark { width: 32px; height: 32px; }
 }
 @media (max-width: 760px) { [dir="rtl"] .mbar { left: 96px; right: 12px; } }
+
+/* Photos */
+.hero-art.photo { height: auto; }
+.hero-art.photo .hero-img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 38% 50%; border-radius: 30px; box-shadow: var(--shadow); }
+.hero-art.photo .inset { position: absolute; left: -26px; bottom: 90px; width: 44%; height: auto; aspect-ratio: 1; object-fit: cover; object-position: 60% 50%; border-radius: 22px; border: 6px solid var(--paper); box-shadow: var(--shadow); }
+.hero-art.photo .badge { bottom: 24px; right: 20px; }
+.photo-slot.has-img { padding: 0; background: none; }
+.photo-slot.has-img img { width: 100%; height: 100%; object-fit: cover; object-position: 55% 40%; }
+.gallery .tile.photo { padding: 0; overflow: hidden; background: var(--cream); }
+.gallery .tile.photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+.gallery .tile.photo:hover img { transform: scale(1.05); }
+.piece .pic img { width: 100%; height: 100%; object-fit: cover; }
+.piece .pic:has(img) { padding: 0; }
+@media (max-width: 860px) {
+  .hero-art.photo .hero-img { aspect-ratio: 4 / 3.4; }
+  .hero-art.photo .inset { left: 12px; bottom: -22px; width: 36%; border-width: 4px; }
+}
+[dir="rtl"] .hero-art.photo .inset { left: auto; right: -26px; }
+@media (max-width: 860px) { [dir="rtl"] .hero-art.photo .inset { right: 12px; } }

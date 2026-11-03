@@ -41,14 +41,15 @@ window.ATELIER = {
     en: ['Safi clay and glazes', 'Tools and apron', 'Firing of your pieces', 'Mint tea and a snack break', 'Small groups (8 max.)'],
     ar: ['طين ومينا آسفي', 'الأدوات والمئزر', 'طهي قطعك في الفرن', 'شاي بالنعناع واستراحة', 'مجموعات صغيرة (8 كحد أقصى)'],
   },
-  // Pieces for sale (TODO: real pieces, photos and prices). `art` picks the drawn plate/vase.
+  // Pieces for sale (TODO: real pieces and prices; photos are examples). `img` is a file in /demos/ceramics/img, `art` picks the drawn plate/vase.
   pieces: [
-    { id: 'p1', art: ['plate', 1], priceMAD: 350, stock: 4, fr: 'Assiette rosace bleue', en: 'Blue rosette plate', ar: 'صحن الوردة الزرقاء' },
-    { id: 'p2', art: ['vase', 2], priceMAD: 680, stock: 2, fr: 'Vase à bandes', en: 'Banded vase', ar: 'جرة بالأشرطة' },
-    { id: 'p3', art: ['plate', 6], priceMAD: 290, stock: 6, fr: 'Assiette terre cuite', en: 'Terracotta plate', ar: 'صحن الطين الأحمر' },
-    { id: 'p4', art: ['vase', 5], priceMAD: 720, stock: 1, fr: 'Jarre de Safi', en: 'Safi jar', ar: 'خابية آسفي' },
-    { id: 'p5', art: ['plate', 9], priceMAD: 420, stock: 3, fr: 'Grand plat de service', en: 'Large serving dish', ar: 'طبق تقديم كبير' },
-    { id: 'p6', art: ['plate', 12], priceMAD: 260, stock: 8, fr: 'Coupelle émaillée', en: 'Glazed small bowl', ar: 'زلافة صغيرة مزججة' },
+    { id: 'p1', img: 'p-plate-blue', art: ['plate', 1], priceMAD: 350, stock: 4, fr: 'Assiette rosace bleue', en: 'Blue rosette plate', ar: 'صحن الوردة الزرقاء' },
+    { id: 'p2', img: 'p-vase', art: ['vase', 2], priceMAD: 680, stock: 2, fr: 'Vase à bandes', en: 'Banded vase', ar: 'جرة بالأشرطة' },
+    { id: 'p3', img: 'p-tajine', art: ['plate', 6], priceMAD: 390, stock: 5, fr: 'Tajine ajouré en terre cuite', en: 'Pierced terracotta tagine', ar: 'طاجين مخرّم من الطين' },
+    { id: 'p4', img: 'p-jar', art: ['vase', 5], priceMAD: 480, stock: 3, fr: 'Pot à couvercle de Safi', en: 'Safi lidded jar', ar: 'برّادة بغطاء من آسفي' },
+    { id: 'p5', img: 'p-plate-big', art: ['plate', 9], priceMAD: 420, stock: 3, fr: 'Grand plat de service', en: 'Large serving dish', ar: 'طبق تقديم كبير' },
+    { id: 'p6', img: 'p-bowl', art: ['plate', 12], priceMAD: 260, stock: 8, fr: 'Coupelle émaillée', en: 'Glazed small bowl', ar: 'زلافة صغيرة مزججة' },
+    { id: 'p7', img: 'p-tajine-blue', art: ['plate', 3], priceMAD: 650, stock: 2, fr: 'Tajine décoré bleu de Safi', en: 'Safi blue painted tagine', ar: 'طاجين مزخرف بأزرق آسفي' },
   ],
   voucherAmounts: [450, 1000, 1600, 4200],      // gift vouchers in MAD (TODO)
   shippingMAD: { morocco: 60, abroad: 250 },    // TODO
