@@ -60,6 +60,30 @@
     {
       "source": "/demo/ceramics/admin",
       "destination": "/demos/ceramics/admin.html"
+    },
+    {
+      "source": "/demo/moto",
+      "destination": "/demos/moto/index.html"
+    },
+    {
+      "source": "/demo/moto/admin",
+      "destination": "/demos/moto/admin.html"
+    },
+    {
+      "source": "/demo/cuisine",
+      "destination": "/demos/cuisine/index.html"
+    },
+    {
+      "source": "/demo/cuisine/admin",
+      "destination": "/demos/cuisine/admin.html"
+    },
+    {
+      "source": "/demo/photo",
+      "destination": "/demos/photo/index.html"
+    },
+    {
+      "source": "/demo/photo/admin",
+      "destination": "/demos/photo/admin.html"
     }
   ],
   "headers": [
