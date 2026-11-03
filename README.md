@@ -9,6 +9,7 @@ Sites de démonstration statiques utilisés par MBN DEV pour vendre ses services
 | LALLA Beauty House | `/demo/beauty` | `/demo/beauty/admin` |
 | Cabinet Alaoui (avocat) | `/demo/law` | `/demo/law/admin` · secrétariat `/demo/law/secretary` |
 | ATLAS DRIVE (location de voitures) | `/demo/rent` | `/demo/rent/admin` |
+| Atelier Safi (céramique : ateliers et formations au Maroc et à l’étranger) | `/demo/ceramics` | `/demo/ceramics/admin` |
 
 - Fichiers : `public/demos/<slug>/` (HTML/CSS/JS sans build). `public/demos/_shared/wa-chat.js` = bulle WhatsApp commune.
 - Les données de démonstration restent dans le navigateur de chaque visiteur (localStorage).

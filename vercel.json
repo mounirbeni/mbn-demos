@@ -52,6 +52,14 @@
     {
       "source": "/demo/rent/admin",
       "destination": "/demos/rent/admin.html"
+    },
+    {
+      "source": "/demo/ceramics",
+      "destination": "/demos/ceramics/index.html"
+    },
+    {
+      "source": "/demo/ceramics/admin",
+      "destination": "/demos/ceramics/admin.html"
     }
   ],
   "headers": [
