@@ -92,6 +92,18 @@
     {
       "source": "/demo/export/admin",
       "destination": "/demos/export/admin.html"
+    },
+    {
+      "source": "/demo/tours",
+      "destination": "/demos/tours/index.html"
+    },
+    {
+      "source": "/demo/tours/admin",
+      "destination": "/demos/tours/admin.html"
+    },
+    {
+      "source": "/demo/tours/widget",
+      "destination": "/demos/tours/widget.html"
     }
   ],
   "headers": [
