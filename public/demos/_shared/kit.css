@@ -202,3 +202,4 @@ table.tbl{width:100%;border-collapse:collapse;font-size:.9rem;min-width:640px}
 .kv dt{color:#777}.kv dd{margin:0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 input[type=date].field{min-width:0;display:block}
+.foot .brand{white-space:normal}

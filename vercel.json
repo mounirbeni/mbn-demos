@@ -84,6 +84,14 @@
     {
       "source": "/demo/photo/admin",
       "destination": "/demos/photo/admin.html"
+    },
+    {
+      "source": "/demo/export",
+      "destination": "/demos/export/index.html"
+    },
+    {
+      "source": "/demo/export/admin",
+      "destination": "/demos/export/admin.html"
     }
   ],
   "headers": [
