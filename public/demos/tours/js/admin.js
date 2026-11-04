@@ -72,5 +72,5 @@
       <div class="card"><h3>Voyageurs par pays</h3>${Object.entries(byC).sort((a, b) => b[1] - a[1]).map(([c, n]) => `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eee;font-size:.9rem"><span>${esc(c)}</span><b>${n}</b></div>`).join('')}</div></div>`;
   }
 
-  adminGate('greg_admin', CFG.pin, shell, '/demo/tours');
+  adminGate('greg_admin', 'tours', CFG.pinHash, shell, '/demo/tours');
 })();

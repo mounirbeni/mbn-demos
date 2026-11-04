@@ -80,19 +80,29 @@
     return draw;
   }
 
-  // Local dashboard PIN (demo only; shown on screen).
-  function adminGate(key, pin, start, back = '/') {
-    let ok = false; try { ok = sessionStorage.getItem(key) === '1'; } catch { /* ignore */ }
+  // Dashboard PIN for the prospect demos. Only a salted SHA-256 hash ships in the page; no hint is shown.
+  // Client-side only: it keeps casual visitors out of the demo dashboard, it is not real security.
+  async function sha256(s) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  function adminGate(key, slug, hash, start, back = '/') {
+    let ok = false; try { ok = sessionStorage.getItem(key) === hash; } catch { /* ignore */ }
     if (ok) return start();
     const root = $('#root');
     root.innerHTML = `<div class="pin"><div class="card"><h2 style="font-size:1.5rem">Espace gérant</h2><p class="muted" style="color:#aaa">Entrez votre code pour accéder au tableau de bord.</p>
-      <form class="form" id="pinf"><input class="field" name="p" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="••••" aria-label="Code PIN"><button class="btn btn-primary">Entrer</button><p id="perr" style="color:#ff8a80;font-size:.85rem;min-height:1.2em;margin:0"></p></form>
-      <p style="font-size:.8rem;color:#888;margin:8px 0 0">Démo : code ${esc(pin)}</p><p style="margin:10px 0 0"><a href="${esc(back)}" style="color:#bbb;font-size:.85rem">← Voir le site</a></p></div></div>`;
+      <form class="form" id="pinf"><input class="field" name="p" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••••" aria-label="Code d’accès"><button class="btn btn-primary">Entrer</button><p id="perr" style="color:#ff8a80;font-size:.85rem;min-height:1.2em;margin:0"></p></form>
+      <p style="margin:10px 0 0"><a href="${esc(back)}" style="color:#bbb;font-size:.85rem">← Voir le site</a></p></div></div>`;
     $('#pinf input').focus();
-    $('#pinf').onsubmit = (e) => {
-      e.preventDefault();
-      if (e.target.p.value.trim() === pin) { try { sessionStorage.setItem(key, '1'); } catch { /* ignore */ } start(); }
-      else $('#perr').textContent = 'Code incorrect.';
+    let tries = 0;
+    $('#pinf').onsubmit = async (e) => {
+      e.preventDefault(); const btn = $('#pinf button');
+      if (tries >= 5) { $('#perr').textContent = 'Trop d’essais. Réessayez plus tard.'; return; }
+      btn.disabled = true;
+      const h = await sha256(`mbn-demo:${slug}:${e.target.p.value.trim()}`);
+      btn.disabled = false;
+      if (h === hash) { try { sessionStorage.setItem(key, hash); } catch { /* ignore */ } start(); }
+      else { tries++; e.target.p.value = ''; $('#perr').textContent = 'Code incorrect.'; }
     };
   }
 

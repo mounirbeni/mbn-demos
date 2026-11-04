@@ -5,7 +5,7 @@
   const CFG = {
     name: 'Greg Tours',
     phone: '+212 661-347269',
-    pin: '3472',
+    pinHash: '9ac6598cfbf056fbd9cd8a2c7bc9087a9c8decc30a2f81b75e0ad82fca018b0a', // SHA-256 of 'mbn-demo:tours:<PIN>' — the PIN itself is never in the source
     deposit: 20,
     langs: ['Français', 'English', 'Español', 'Deutsch'],
     childPct: 50,

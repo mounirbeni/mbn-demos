@@ -124,5 +124,5 @@
       ${s.log.length ? `<div class="grid">${s.log.slice(0, 30).map((m) => `<div class="card" style="padding:16px"><div class="muted" style="font-size:.8rem">${new Date(m.at).toLocaleString('fr-FR')} · ${esc(m.to)}</div><p style="margin:6px 0 0">${esc(m.msg)}</p></div>`).join('')}</div>` : '<div class="card empty">Aucun message pour l’instant. Confirmez une réservation pour en voir un.</div>'}`;
   }
 
-  adminGate('tamouda_admin', CFG.pin, shell, '/demo/moto');
+  adminGate('tamouda_admin', 'moto', CFG.pinHash, shell, '/demo/moto');
 })();

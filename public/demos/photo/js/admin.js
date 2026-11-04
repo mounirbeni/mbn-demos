@@ -70,5 +70,5 @@
       <div class="card"><h3>Formules vendues</h3>${byP.map(([n, c]) => `<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;font-size:.9rem"><span>${n}</span><b>${c}</b></div><div class="bar"><i style="width:${ok.length ? c / ok.length * 100 : 0}%"></i></div></div>`).join('')}</div></div>`;
   }
 
-  adminGate('mv_admin', CFG.pin, shell, '/demo/photo');
+  adminGate('mv_admin', 'photo', CFG.pinHash, shell, '/demo/photo');
 })();

@@ -4,7 +4,7 @@
 
   const CFG = {
     name: 'EPS Design Cuisine',
-    pin: '1985',
+    pinHash: '594ee00821caeeddc86b8b122eea81fa92d6585ebfccc551a2fb54ae792debf4', // SHA-256 of 'mbn-demo:cuisine:<PIN>' — the PIN itself is never in the source
     hours: 'Lun – Sam · 9h – 19h',
     shapes: [
       { id: 'line', n: 'Linéaire', k: 1, svg: '<rect x="6" y="14" width="48" height="10" rx="2"/>' },

@@ -61,5 +61,5 @@
       <div class="card"><h3>Références les plus demandées (pcs)</h3>${Object.entries(refs).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([r, q]) => `<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;font-size:.9rem"><span>${r} <span class="muted">· ${esc(prod(r).fr)}</span></span><b>${q.toLocaleString('fr-FR')}</b></div><div class="bar"><i style="width:${q / mr * 100}%"></i></div></div>`).join('')}</div></div>`;
   }
 
-  adminGate('avenir_admin', CFG.pin, shell, '/demo/export');
+  adminGate('avenir_admin', 'export', CFG.pinHash, shell, '/demo/export');
 })();

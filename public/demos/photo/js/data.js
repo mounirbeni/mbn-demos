@@ -6,7 +6,7 @@
     name: 'Magic Vision',
     city: 'Nador',
     phone: '+212 677-884535',
-    pin: '2611',
+    pinHash: 'deaa9138349e487594129aa0fe66417dd5e0c4bfd237e6e5ff5f51bc3defcb1f', // SHA-256 of 'mbn-demo:photo:<PIN>' — the PIN itself is never in the source
     hours: '7j/7 sur rendez-vous',
     deposit: 30,
     types: ['Mariage', 'Fiançailles', 'Henné', 'Anniversaire', 'Baptême / Aqiqa', 'Portrait / famille', 'Entreprise / produit'],

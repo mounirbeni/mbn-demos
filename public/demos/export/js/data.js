@@ -6,7 +6,7 @@
     name: 'Coopérative Avenir',
     full: 'Coopérative Avenir d’Exportation de Céramique',
     phone: '+212 720-557298',
-    pin: '7205',
+    pinHash: 'c8ae48f1618652228f169893c50545221f3bca893ba7ff42f05b80a3ce8e9d2d', // SHA-256 of 'mbn-demo:export:<PIN>' — the PIN itself is never in the source
     incoterms: ['EXW', 'FOB', 'CIF', 'DAP'],
     cats: [['all', 'Tout', 'All'], ['tableware', 'Arts de la table', 'Tableware'], ['tajine', 'Tajines', 'Tagines'], ['vase', 'Vases & jarres', 'Vases & jars'], ['deco', 'Décoration', 'Decor']],
     products: [

@@ -7,7 +7,7 @@
     city: 'Agadir',
     phone: '+212 646-383873',
     wa: '212646383873',
-    pin: '2026',
+    pinHash: '91279bee849d0908ee46dde2bd757741e731fa3f479473e0bdf43c43b8dd796c', // SHA-256 of 'mbn-demo:moto:<PIN>' — the PIN itself is never in the source
     hours: '7j/7 · 8h – 21h',
     zones: [
       { n: 'Agadir centre & Marina', fee: 0 },

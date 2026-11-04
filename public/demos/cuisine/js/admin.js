@@ -76,5 +76,5 @@
       <div class="card"><h3>Formes demandées</h3>${shapes.map(([n, c]) => `<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;font-size:.9rem"><span>${n}</span><b>${c}</b></div><div class="bar"><i style="width:${L.length ? c / L.length * 100 : 0}%"></i></div></div>`).join('')}</div></div>`;
   }
 
-  adminGate('eps_admin', CFG.pin, shell, '/demo/cuisine');
+  adminGate('eps_admin', 'cuisine', CFG.pinHash, shell, '/demo/cuisine');
 })();
